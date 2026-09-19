@@ -732,7 +732,21 @@ Average: 567 ms and $0.0000284 per call. Ten thousand calls would take about 1.6
 
 The four hardware examples cost a bit more, because the state holds requirements, candidate parameters and the policy text verbatim. Still under four hundredths of a cent each.
 
-Two last things I would tell anyone picking this up. First, Jev is in early access; the model name `~typesafe/jev-latest` resolves to the newest build, and mine resolved to `typesafe/jev-1.13-20260917`. Second, every threshold and pattern in this document came from these fourteen runs. Before you ship anything, run your own data and look at where your probabilities land. There is no shortcut around that step.
+Two small things worth knowing. First, Jev is in early access; the model name `~typesafe/jev-latest` resolves to the newest build, and mine resolved to `typesafe/jev-1.13-20260917`. Second, every threshold and pattern in this document came from these fourteen runs. Before you ship anything, run your own data and look at where your probabilities land. There is no shortcut around that step.
+
+### Is this just a wrapper around an LLM?
+
+Half true. Constraining the output format is something a general model can do too, with a JSON schema and a retry loop.
+
+Three things are not wrapper-level:
+
+- **Where the probability comes from.** Ask a chat model to "say 0.8" and it is guessing at a number. Jev's probabilities are the training target, which is why they hold up as thresholds.
+- **What one more question costs.** A chat model pays per output token, so every extra question costs more. Jev returns all answers in one pass, so ten questions cost about what one costs.
+- **How long you wait.** Half a second fits in a synchronous path, called on every click.
+
+So the value is not intelligence, it is the interface. It does not know more than a general model. It turns a judgment into a number you can read.
+
+Does it need to exist, then? That depends on whether your system has anything that should be read as a number. For low-volume, asynchronous judgments that do not need a probability, a general model with a JSON schema is enough. If you want a program making thousands of small calls a minute, or you want uncertainty to be a range instead of a sentence, what you need is calibration and cheap, not smarter. A chat model is like a person. This is like a sensor. A sensor does not need to be clever, it needs to be steady, cheap and fast.
 
 ---
 
