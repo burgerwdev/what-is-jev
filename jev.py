@@ -31,6 +31,8 @@ Jev 输入一段 state（纯文本，或 JSON 对象/数组），输出预先定
   --selftest        离线自检，不消耗额度
 
 密钥：环境变量 OPENROUTER_API_KEY（或 --api-key）。
+
+仓库：https://github.com/burgerwdev/what-is-jev（含 14 个可运行的例子和用法笔记）。
 """
 import argparse
 import json

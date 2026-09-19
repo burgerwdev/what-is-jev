@@ -2,7 +2,7 @@
 
 English | [中文](README.zh-CN.md)
 
-Jev is a model from TypeSafe, the first of their System One series, released in September 2026. The one-line pitch is that it does not generate text, it only returns probabilities. I could not tell what that was good for from the pitch alone, so I ran fourteen decisions from ordinary work through it. This repo is the result: a small CLI, the fourteen examples, and what I learned.
+Jev is a model from TypeSafe, the first of their [System One series](https://typesafe.ai/blog/introducing-system-one-models-and-jev), released in September 2026. The one-line pitch is that it does not generate text, it only returns probabilities. I could not tell what that was good for from the pitch alone, so I ran fourteen decisions from ordinary work through it. This repo is the result: a small CLI, the fourteen examples, and what I learned.
 
 It does not write prose and it will not chat. You hand it some material, ask a few narrow questions you defined in advance, and it answers only those questions, each with a probability.
 
@@ -30,6 +30,34 @@ The split of work looks like this:
 | Good at | Writing, generating, coding | Classifying, routing, scoring, gatekeeping |
 
 Short version: use a chat model to produce content, use Jev to make a call.
+
+## What is in here
+
+Fourteen decisions, each from a different corner of ordinary work. Every one is a runnable command with the real output pasted underneath it.
+
+| # | Case | Area | The questions I asked |
+|---|---|---|---|
+| 1 | E-commerce complaint | Customer support | Who should handle it, how urgent, how angry, is compensation being asked |
+| 2 | Prompt injection | Content safety | Is it an attack, what type, how bad, what should the gateway do |
+| 3 | 3am cross-border transfer | Financial fraud | Suspicious, risk level, risk type, next action |
+| 4 | Chest pain | Healthcare (demo only) | Emergency, urgency, department, ambulance |
+| 5 | Contract clauses | Legal | Unfair terms, risk level, risk type, should a lawyer look |
+| 6 | Resume screening | Hiring | Meets the bar, match level, main gap, advance to interview |
+| 7 | Short-answer grading | Education | Correct, score, error type, teacher review |
+| 8 | Inbound lead | Sales | Priority, owner, buying stage, does a technical person join |
+| 9 | Expense report | Finance | Compliant, over the cap, duplicate risk, what to do with it |
+| 10 | Model answer check | AI engineering | Backed by the source, contradicts it, faithfulness, where it is wrong |
+| 11 | Capacitor selection | Hardware | Any viable option, which one, main problem, re-select |
+| 12 | Derating check | Hardware | All compliant, which parts fail, risk level, next step |
+| 13 | Second source IC | Hardware | Drop-in replacement, risk, main risk, required action |
+| 14 | Counterfeit parts | Hardware / supply chain | Counterfeit risk, risk level, main concern, what to do with the lot |
+
+Where the pieces live:
+
+- [Jev announcement and the System One idea](https://typesafe.ai/blog/introducing-system-one-models-and-jev)
+- [Decisions endpoint reference on OpenRouter](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-questions-and-answers-request)
+- [Python SDK for the same endpoint](https://openrouter.ai/docs/client-sdks/python/sdks/decisions/README)
+- [This repo](https://github.com/burgerwdev/what-is-jev)
 
 ---
 
@@ -602,7 +630,7 @@ Three to five questions in the same request come back together, and the cost bar
 ```bash
 # Setup
 export OPENROUTER_API_KEY=sk-or-...
-git clone <this repo> && cd what-is-jev
+git clone https://github.com/burgerwdev/what-is-jev.git && cd what-is-jev
 
 # Self-check, offline, costs nothing
 python3 jev.py --selftest

@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-Jev 是 TypeSafe 出的模型，System One 系列的第一个，2026 年 9 月发布。我看到它的介绍时说「不生成文字，只输出概率」，第一反应是这能干什么用，就顺手拿十几个场景试了一遍。这篇是我的记录。
+Jev 是 TypeSafe 出的模型（[发布公告](https://typesafe.ai/blog/introducing-system-one-models-and-jev)），System One 系列的第一个，2026 年 9 月发布。我看到它的介绍时说「不生成文字，只输出概率」，第一反应是这能干什么用，就顺手拿十几个场景试了一遍。这篇是我的记录。
 
 它不写文章，也不陪你聊天。你给它一段材料，再问它几个你提前定好的问题，它只回答这几道题，每题给一个概率。
 
@@ -30,6 +30,34 @@ if jev("这条评论是不是广告") > 0.9:
 | 适合干的活 | 写作、生成、写代码 | 分类、路由、打分、审核、放行或拦截 |
 
 一句话：要生成内容找大模型，要做判断用 Jev。
+
+## 这十四个例子是什么
+
+十四个判断，每个来自不同行业。每个例子都有一条能直接跑的命令，下面贴着真实输出。
+
+| # | 案例 | 领域 | 我问了什么 |
+|---|---|---|---|
+| 1 | 电商客诉 | 客服 | 谁处理、多急、多愤怒、是否要求赔偿 |
+| 2 | 提示注入 | 内容安全 | 是不是攻击、哪一类、多严重、怎么处置 |
+| 3 | 凌晨跨境汇款 | 金融风控 | 是否可疑、风险等级、风险类型、下一步动作 |
+| 4 | 胸痛分诊 | 医疗（仅演示） | 是否急症、多紧急、挂哪个科、要不要叫救护车 |
+| 5 | 合同条款 | 法务 | 有无不利条款、风险等级、风险类型、要不要律师看 |
+| 6 | 简历筛选 | 招聘 | 是否达门槛、匹配程度、主要缺口、是否约面 |
+| 7 | 主观题评分 | 教育 | 是否正确、给几分、错因、是否人工复核 |
+| 8 | 线索跟进 | 销售 | 优先级、分配给谁、采购阶段、是否需要技术介入 |
+| 9 | 报销审批 | 财务 | 是否合规、是否超限、是否重复报销、怎么处理 |
+| 10 | 模型回答核对 | AI 工程 | 有无依据、是否矛盾、忠实程度、错在哪里 |
+| 11 | 电容选型 | 硬件 | 是否有可行方案、推荐哪个、主要问题、是否重选 |
+| 12 | 降额校核 | 硬件 | 是否全部合规、哪些违规、风险等级、下一步 |
+| 13 | 替代料评估 | 硬件 | 能否直接替换、风险大小、主要风险、需要做什么 |
+| 14 | 来料质量 | 硬件／供应链 | 假货风险、风险等级、主要疑点、这批货怎么处理 |
+
+相关链接：
+
+- [Jev 发布公告与 System One 的介绍](https://typesafe.ai/blog/introducing-system-one-models-and-jev)
+- [OpenRouter 上的 decisions 接口文档](https://openrouter.ai/docs/api/api-reference/alphadecisions/submit-a-decisions-questions-and-answers-request)
+- [同一接口的 Python SDK](https://openrouter.ai/docs/client-sdks/python/sdks/decisions/README)
+- [本仓库](https://github.com/burgerwdev/what-is-jev)
 
 ---
 
@@ -594,7 +622,7 @@ python3 jev.py \
 ```bash
 # 准备
 export OPENROUTER_API_KEY=sk-or-...
-cd /home/burgerwdev/tmp/misc
+git clone https://github.com/burgerwdev/what-is-jev.git && cd what-is-jev
 
 # 先自检，不花钱，确认脚本没坏
 python3 jev.py --selftest
