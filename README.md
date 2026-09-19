@@ -4,24 +4,24 @@ English | [中文](README.zh-CN.md)
 
 Written by [好奇牛马](https://space.bilibili.com/28447213) on Bilibili.
 
-Jev is a model from TypeSafe, the first of their [System One series](https://typesafe.ai/blog/introducing-system-one-models-and-jev), released in September 2026. The one-line pitch is that it does not generate text, it only returns probabilities. I could not tell what that was good for from the pitch alone, so I ran fourteen decisions from ordinary work through it. This repo is the result: a small CLI, the fourteen examples, and what I learned.
+Jev is a model from TypeSafe, the first of their [System One series](https://typesafe.ai/blog/introducing-system-one-models-and-jev), released in September 2026. One line in the announcement stayed with me: it does not generate text, it only returns probabilities. I could not work out what that was good for, so I took the judgments I could never write as code, lined up fourteen of them, and threw them at it one by one. This repo is what came back.
 
-It does not write prose and it will not chat. You hand it some material, ask a few narrow questions you defined in advance, and it answers only those questions, each with a probability.
+It does not write prose and it will not chat. You hand it some material and a few narrow questions you decided on earlier. It answers those questions, each with a probability, and not one word more.
 
-Most of the code I write gets stuck in the same place. `if (order_total > 500)` is easy, the code does that itself. But "is this complaint urgent" and "will this capacitor survive an automotive design" cannot be written as a number, so a human had to look. That is the gap Jev fills:
+Most of the code I write gets stuck in the same spot. `if (order_total > 500)` is easy, the code does that itself. But "is this complaint urgent" and "will this capacitor survive in an automotive design" cannot be written as a number. Someone had to look. That is the slot Jev fills:
 
 ```python
 if jev("is this review an ad") > 0.9:
     delete_comment()
 ```
 
-Three rules make it different from a chat model:
+Three things separate it from a chat model:
 
 - It can only pick from the options I give it, so it never invents a category and I never parse strings.
 - Every answer carries a probability, so 0.99 and 0.55 can be treated differently. I choose the thresholds.
 - It is fast and cheap. Around half a second per call in my runs, about $0.00003 for a call with four questions in it.
 
-The split of work looks like this:
+Here is roughly where the line falls:
 
 | | Chat models (GPT, Claude, ...) | Jev |
 |---|---|---|
@@ -31,11 +31,11 @@ The split of work looks like this:
 | Cost per call | Fractions of a cent to a few cents | About $0.00003 |
 | Good at | Writing, generating, coding | Classifying, routing, scoring, gatekeeping |
 
-Short version: use a chat model to produce content, use Jev to make a call.
+My rule of thumb: use a chat model to produce content, use Jev to make a call.
 
 ## What is in here
 
-Fourteen decisions, each from a different corner of ordinary work. Every one is a runnable command with the real output pasted underneath it.
+Fourteen decisions, each from a different corner of the work. Every one has a command you can run, with the real output underneath.
 
 | # | Case | Area | The questions I asked |
 |---|---|---|---|
@@ -96,12 +96,12 @@ A score is a decimal, not a level. 2.79 means it sits close to "Furious" but has
 
 ### Look at the distribution, not the headline
 
-The "Answer" column in my tables is just the most probable option. It is not the interesting part. The distribution is.
+The "Answer" column is just the most probable option. That is not the part I read. I read the distribution.
 
-- In the fraud example, `account_takeover 0.99` is one-sided, so I am comfortable automating on it.
-- In the grading example the error label reads `wrong_concept 0.28 / missing_mechanism 0.27 / imprecise_wording 0.27 / none 0.17`. Four options of nearly equal size means the question itself is ambiguous and the model is hedging. That one goes to a human.
+- In the fraud example, `account_takeover 0.99` is one-sided. I am happy to automate that.
+- In the grading example the error label reads `wrong_concept 0.28 / missing_mechanism 0.27 / imprecise_wording 0.27 / none 0.17`. Four options of nearly equal size. The question itself is ambiguous and the model is hedging. That one goes to a person.
 
-A tight distribution can be automated. A flat one needs a person.
+When the mass sits on one option, I let it run. When it is spread out, a person looks at it.
 
 ### Confidence is the model grading itself
 
@@ -117,11 +117,11 @@ Only `choice` and `score` carry a confidence. Yes/no questions do not; the proba
 | Contract | risk_type | 0.38 |
 | Grading | error_type | 0.11 |
 
-The top half is "I am sure". The bottom half is "I am not, you decide". Routing those low-confidence answers to a human queue is the most useful thing I do with this.
+The top half is "I am sure". The bottom half is "I am not". That second half is the most useful part: low-confidence answers get pulled out and sent to a person.
 
 ### Pick thresholds from your own data
 
-I run a batch first, look at where the probabilities actually land, then cut. Roughly:
+I run a batch first, see where the probabilities actually land, and only then pick a cut-off. Roughly:
 
 ```python
 def decide(answers, key, high=0.9, low=0.1):
@@ -139,17 +139,17 @@ def decide_choice(answers, key, min_confidence=0.6):
     return a["choice"]
 ```
 
-The point of automation here is not to automate everything. It is to clear the obvious cases and leave the ambiguous ones to people.
+The point is not to automate everything. Clear the obvious cases, leave the ambiguous ones to people.
 
 ---
 
 ## 3. The fourteen examples
 
-Every command below uses inline arguments, so you can copy and run it as is. The tables are real output from my runs; I have not edited them. Run the same question twice and the decimals move a little (0.88 versus 0.86), but the direction and the confidence hold.
+Every command below has its arguments written out, so you can copy it as it stands. The tables are the raw output of my runs, unedited. Ask the same question twice and the decimals move a little, 0.88 versus 0.86. The direction and the confidence hold.
 
 ### 1. E-commerce support: who handles this complaint, how urgent, is compensation being asked
 
-I wrote a customer complaint plus order and membership data, then asked four things:
+I wrote a customer complaint, added the order and the membership record, and asked four things:
 
 ```bash
 python3 jev.py \
@@ -172,7 +172,7 @@ python3 jev.py \
 | anger | score | 2.79/3 ≈ Furious | Calm 0.00 / Annoyed 0.00 / Angry 0.21 / Furious 0.79 | 0.79 |
 | asks_compensation | yes/no | no 94% | yes 0.06 / no 0.94 | — |
 
-A customer chasing a shipment, needing it tomorrow, threatening to complain. The ticket goes to order_logistics and gets the "Furious" handling script. `asks_compensation` at 6% tells me they are still just chasing, not asking for money yet.
+A customer chasing a shipment, needing it tomorrow, already saying the word complaint. The ticket goes to order_logistics with the "Furious" script attached. On money: 6%. At this point they still just want the parcel.
 
 ### 2. Content safety: is this input trying a prompt injection
 
@@ -204,7 +204,7 @@ python3 jev.py \
 | threat_level | score | 2.44/3 ≈ Clearly malicious | Benign question 0.00 / Probing 0.06 / Clearly malicious 0.42 / Direct attack 0.52 | 0.44 |
 | action | choice | refuse | refuse 0.61 / sanitize 0.33 / human_review 0.06 / allow 0.00 | 0.47 |
 
-Whether it is an attack is not in doubt at 99%. What to do about it is: 0.61 refuse against 0.33 sanitize, with a confidence of 0.47. I do not let the program decide that one. It goes to the review queue.
+Whether it is an attack is not in doubt, 99%. What to do about it is the hard part: 0.61 refuse against 0.33 sanitize, confidence 0.47. I do not let the program make that call. It goes to review.
 
 ### 3. Fraud: a 3am cross-border wire transfer
 
@@ -233,11 +233,11 @@ python3 jev.py \
 | risk_type | choice | account_takeover | account_takeover 0.99 / money_laundering 0.01 / card_fraud 0.00 / normal 0.00 / merchant_fraud 0.00 | 0.99 |
 | action | choice | freeze | freeze 0.94 / manual_review 0.05 / step_up_auth 0.01 / approve 0.00 | 0.92 |
 
-Five signals line up: 3am, 84k, first ever transfer to a newly added overseas account, a new device, an overseas IP. Freeze comes back at 0.94 with a confidence of 0.92. That one I will automate.
+Five signals line up: 3am, 84k, first ever transfer to a newly added overseas account, a new device, an overseas IP. Freeze comes back at 0.94, confidence 0.92. That one I will automate.
 
 ### 4. Medical triage: how urgent, which department
 
-I used a textbook emergency presentation to see whether it would hesitate under pressure. This example is a demo only. Do not use it for real medical decisions.
+For this one I used a textbook emergency, to see whether it would hesitate under pressure. One note: this is a demo. Do not use it for real medical decisions.
 
 ```bash
 python3 jev.py \
@@ -259,7 +259,7 @@ python3 jev.py \
 | department | choice | emergency | emergency 1.00 / pulmonology 0.00 / gastroenterology 0.00 / cardiology 0.00 / orthopedics 0.00 | 0.99 |
 | needs_ambulance | yes/no | yes 97% | yes 0.97 / no 0.03 | — |
 
-Crushing chest pain radiating to the shoulder, cold sweat, no relief from nitroglycerin, diabetic and hypertensive history. The model does not hesitate at all. In a real product I would only use this layer to sort and route. The final call belongs to a clinician.
+Crushing chest pain radiating to the shoulder, cold sweat, no relief from nitroglycerin, diabetes and high blood pressure on the history. The model does not hesitate. In a real product I would use this layer to sort and route only. The last call belongs to a clinician.
 
 ### 5. Legal: do these contract clauses need changing
 
@@ -288,7 +288,7 @@ python3 jev.py \
 | risk_type | choice | unilateral_pricing | unilateral_pricing 0.51 / liability_waiver 0.36 / high_penalty 0.08 / auto_renewal 0.05 / none 0.00 | 0.38 |
 | needs_lawyer | yes/no | yes 96% | yes 0.96 / no 0.04 | — |
 
-"Renegotiate" and "do not sign" split exactly 50/50, which tells me this contract is not a two-line fix. The use I see for this is triage: clear the obviously fine contracts automatically and surface the rest for a lawyer.
+"Renegotiate" and "do not sign" split 50/50. This contract is not a two-line fix. What I would use it for is triage: let the clean contracts through, hand the rest to a lawyer.
 
 ### 6. Hiring: is this resume worth an interview
 
@@ -315,7 +315,7 @@ python3 jev.py \
 | main_gap | choice | none | none 0.70 / cloud_native_depth 0.19 / team_leadership 0.10 / industry_background 0.01 / education 0.00 | 0.62 |
 | advance | yes/no | yes 87% | yes 0.87 / no 0.13 | — |
 
-Two signals disagree a little: the match score says 0.81 "strong match", the advance question says 87%. The missing points are probably the "mostly remote" preference, which is exactly the kind of thing a hiring manager should look at. When two signals disagree like that, I follow the more conservative one.
+The two signals disagree a little. The match score says 0.81 "strong match"; the advance question says 87%. The missing points are probably that "mostly remote" preference, which is exactly what a hiring manager should look at. When two signals disagree, I follow the more careful one.
 
 ### 7. Education: grading a short answer and labeling the error
 
@@ -343,7 +343,7 @@ python3 jev.py \
 | error_type | choice | wrong_concept | wrong_concept 0.28 / missing_mechanism 0.27 / imprecise_wording 0.27 / none 0.17 / off_topic 0.01 | 0.11 |
 | needs_teacher | yes/no | yes 55% | yes 0.55 / no 0.45 | — |
 
-This is my clearest case of the distribution mattering more than the headline. The score is settled, 0.90 on "partially correct". The error label is not: 0.28 / 0.27 / 0.27 / 0.17 with a confidence of 0.11. So: let the score be automatic, keep the error tag away from automation.
+This is the clearest case of the distribution mattering more than the headline. The score is settled, 0.90 on "partially correct". The error label is not: 0.28 / 0.27 / 0.27 / 0.17, confidence 0.11. What I do: score automatic, error tag not.
 
 ### 8. Sales: how hot is this lead, who should own it
 
@@ -374,7 +374,7 @@ python3 jev.py \
 | buying_stage | choice | evaluation | evaluation 0.92 / decision 0.06 / research 0.02 / no_need 0.00 | 0.90 |
 | needs_technical | yes/no | yes 90% | yes 0.90 / no 0.10 | — |
 
-Routing has no ambiguity at all, and this time even the buying stage comes back firm at 0.92. Worth noting that the wording of the question changed the confidence a lot compared with the Chinese version of the same example, where the stage split three ways. Small wording differences show up in the confidence, which is the part I actually watch.
+Routing has no ambiguity, 1.00, and this time even the buying stage comes back firm at 0.92. One thing I noticed: the wording moved the confidence a long way compared with the Chinese version of this same example, where the stage split three ways. Small wording changes show up in the confidence. That is the number I watch.
 
 ### 9. Finance: can this expense report be approved automatically
 
@@ -401,7 +401,7 @@ python3 jev.py \
 | duplicate_risk | yes/no | no 90% | yes 0.10 / no 0.90 | — |
 | action | choice | reject | reject 0.54 / request_documents 0.29 / manual_review 0.17 / auto_approve 0.00 | 0.39 |
 
-Expense reports are the easiest thing on this list to automate, because the rules are written down. 4860 CNY against a 3000 CNY cap with no prior written approval. In the Chinese version of this example the model preferred "request documents"; here it says "reject" at 0.54 with a confidence of only 0.39. Either way the confidence is telling me this specific call belongs to a person, which is fair. A missing approval letter is a fixable problem, not fraud.
+Expense reports are the easiest thing on this list to automate, because the rules are already written down. 4860 CNY against a 3000 CNY cap, no prior written approval. In the Chinese version of this example the model preferred "request documents". Here it says "reject" at 0.54, confidence 0.39. Either way the confidence tells me this one belongs to a person, and that is fair. A missing approval letter is fixable. It is not fraud.
 
 ### 10. AI engineering: checking a model answer for hallucination
 
@@ -428,11 +428,11 @@ python3 jev.py \
 | faithfulness | score | 2.18/3 ≈ Key facts wrong | Faithful 0.00 / Imprecise details 0.01 / Key facts wrong 0.79 / Fabricated 0.20 | 0.79 |
 | error_point | choice | multiple | multiple 0.99 / day_count 0.01 / carryover 0.00 / notice_period 0.00 / none 0.00 | 0.99 |
 
-The document says 5 days after one year, 10 after three, 3 working days notice, carry over to March 31. The answer says 7 days after two years, one week notice, expires at year end. Three separate facts are wrong and the model catches all three. I plan to put this check in front of the answer before it reaches a user: if `supported` drops below 0.5, do not send it.
+The document says 5 days after one year, 10 after three, 3 working days notice, carry over to March 31. The answer says 7 days after two years, one week notice, expires at year end. Three facts wrong, and it catches all three. I am putting this check in front of the answer before a user sees it: if `supported` drops below 0.5, it does not go out.
 
 ### 11. Component selection: which of three capacitors ships in an automotive design
 
-This is the case I most wanted to test, because matching datasheets by hand eats hours. I wrote a tight requirement for an automotive DC-DC output filter and dropped in three candidates:
+This is the one I most wanted to try. Matching datasheets by hand eats hours. I wrote a tight requirement for an automotive DC-DC output filter and dropped in three candidates:
 
 ```bash
 python3 jev.py \
@@ -459,9 +459,9 @@ python3 jev.py \
 | main_problem | choice | voltage_rating | voltage_rating 0.60 / package_size 0.23 / missing_certification 0.09 / none 0.08 / cost 0.00 / temp_range 0.00 | 0.51 |
 | re_select | yes/no | yes 57% | yes 0.57 / no 0.43 | — |
 
-Taken one at a time: the Samsung part is 16 V and fails on voltage outright. The KEMET part is tantalum, 50 V is fine, but 2917 is bigger than the 1210 limit and it costs 8.40 CNY. The Murata part is the only one that hits everything. It wins at 0.96.
+One at a time. The Samsung part is 16 V and fails on voltage outright. The KEMET part is tantalum, 50 V is fine, but 2917 is bigger than the 1210 limit and it costs 8.40 CNY. The Murata part is the only one that hits everything, and it wins at 0.96.
 
-And yet `has_viable_option` is only 0.64 and `re_select` is 0.57 in favor of looking again. I can guess why: my requirement says "at least 50 V" and the Murata part is exactly 50 V, right on the line. Anyone who has done this for a living asks the next question too, because X7R capacitance falls under DC bias, and with heat on top of that a 22 uF part can lose half its value. So I would not take this vote as final. I would go read the bias curve.
+And yet `has_viable_option` is only 0.64, and `re_select` is 0.57 in favor of looking again. I can guess why: my requirement says "at least 50 V" and the Murata part is exactly 50 V, right on the line. Anyone who has done this for a living asks the next question anyway, because X7R capacitance drops under DC bias, and with heat on top a 22 uF part can lose half its value. I would not take this vote as final. I would go and read the bias curve.
 
 The two numbers I would check by hand are the voltage margin, and the capacitance under DC bias at 105 C.
 
@@ -493,15 +493,15 @@ python3 jev.py \
 | risk_level | score | 2.94/3 ≈ High, fix before production | Negligible 0.00 / Low 0.01 / Medium, needs rework 0.03 / High, fix before production 0.96 | 0.94 |
 | next_action | choice | replace_parts | replace_parts 0.87 / design_review 0.08 / change_circuit 0.03 / thermal_test 0.02 / no_action 0.00 | 0.84 |
 
-The arithmetic itself is not the hard part. The hard part is that there are five rules and each part type maps to a different one, plus a sentence that says limits tighten by ten percentage points above 85 C, and the enclosure measures 95 C.
+The arithmetic is not the hard part. The hard part is applying it: five rules, and each part type maps to a different one. Plus one sentence saying limits tighten by ten percentage points above 85 C, and the enclosure measures 95 C.
 
-Once that is applied: R31 runs 0.62 W against a 1 W rating, which is 62%, and the high-temperature limit is 40%, so it fails. Q3 runs 85 V against a 100 V rating, 85%, with a limit of 70%, so it fails too. C7 runs 24 V against 35 V, 68.6%, against a limit of 70%, which passes by 1.4 points. I would not ship that margin either, but it does pass.
+Apply it and you get this. R31 runs 0.62 W against a 1 W rating, 62%, where the high-temperature limit is 40%. It fails. Q3 runs 85 V against 100 V, 85%, limit 70%. That fails too. C7 runs 24 V against 35 V, 68.6%, limit 70%. It passes by 1.4 points. I would not ship that margin either, but it does pass.
 
-The model picks `r31_and_q3` at 0.70, correct. The spread across the other options is what points at the borderline part.
+The model picks `r31_and_q3` at 0.70, which is right. The spread across the other options is what points at the borderline part.
 
 ### 13. Second source: can this buck converter be swapped
 
-With alternates, the question is rarely "does it work". It is "will swapping it force re-validation". I used a common buck converter and its cheaper replacement:
+With alternates, the question is rarely "does it work". It is "will swapping it force a re-test". I used a common buck converter and its cheaper replacement:
 
 ```bash
 python3 jev.py \
@@ -529,13 +529,13 @@ python3 jev.py \
 | main_risk | choice | switching_freq_emi | switching_freq_emi 0.82 / pinout 0.17 / input_voltage_range 0.01 / none 0.00 / thermals 0.00 / supply_price 0.00 | 0.78 |
 | required_action | choice | retest_emc | retest_emc 0.77 / redesign_pcb 0.13 / do_not_substitute 0.09 / swap_directly 0.01 / redo_thermal_and_reliability 0.00 | 0.71 |
 
-Both parts are SOIC-8, both are 3 A, and they look interchangeable at a glance. But switching goes from 570 kHz to 1.5 MHz, so EMI behavior changes and a machine that already passed certification needs retesting. The input range also moves from 3.5 V to 4.5 V, which does not matter on a 24 V rail but would matter on a battery-powered product.
+Both are SOIC-8, both are 3 A, and at a glance they look interchangeable. But switching goes from 570 kHz to 1.5 MHz, so EMI behavior changes and a machine that already passed certification needs retesting. The input floor also moves from 3.5 V to 4.5 V. On a 24 V rail that does not matter. On a battery-powered product it would.
 
-It also puts 0.17 on `pinout`, which is where I would look next anyway. The recommendation is `retest_emc` at 0.77, which is a useful answer for both purchasing and the hardware engineer: swap the part, add the test.
+It also puts 0.17 on `pinout`, which is where I would look next anyway. The recommendation is `retest_emc` at 0.77. Purchasing and the hardware engineer can both use that: swap the part, add the test.
 
 ### 14. Incoming quality: half-price chips from a marketplace
 
-The last one is a scene I have watched in procurement groups more than once. Half the going price and a story about why:
+The last one is a scene I have watched in procurement groups more than once: half the going price, and a story to go with it:
 
 ```bash
 python3 jev.py \
@@ -563,7 +563,7 @@ python3 jev.py \
 
 6.80 against 12.50, no label on the reel, no humidity card, re-tinning on the pins. Risk level 0.99.
 
-The interesting column is `main_concern`: 0.51 / 0.34 / 0.15 with a confidence of 0.38. It is not that one clue stands out. It is that many things are wrong at once. The actions split between returning the lot (0.71) and sending samples for testing (0.21). What actually happens depends on the purchasing policy, and the model can only tell you not to put this into stock with a clear conscience.
+The interesting column is `main_concern`: 0.51 / 0.34 / 0.15, confidence 0.38. Not one clue standing out, but several things wrong at once. The actions split between returning the lot (0.71) and sending samples out for testing (0.21). What actually happens depends on the purchasing policy. The model can only tell you not to put this into stock with a clear conscience.
 
 ---
 
@@ -732,9 +732,9 @@ Fourteen calls, one per example, English state:
 
 Average: 567 ms and $0.0000284 per call. Ten thousand calls would take about 1.6 hours and cost about $0.28.
 
-The four hardware examples cost a bit more, because the state holds requirements, candidate parameters and the policy text verbatim. Still under four hundredths of a cent each.
+The four hardware examples cost a little more, since the state carries requirements, candidate parameters and the policy text verbatim. Still under four hundredths of a cent each.
 
-Two small things worth knowing. First, Jev is in early access; the model name `~typesafe/jev-latest` resolves to the newest build, and mine resolved to `typesafe/jev-1.13-20260917`. Second, every threshold and pattern in this document came from these fourteen runs. Before you ship anything, run your own data and look at where your probabilities land. There is no shortcut around that step.
+Two small things. First, Jev is in early access; the model name `~typesafe/jev-latest` resolves to the newest build, and mine resolved to `typesafe/jev-1.13-20260917`. Second, every threshold and pattern here came from these fourteen runs. Before you ship anything, run your own data and look at where your probabilities land. There is no shortcut around that step.
 
 ### Is this just a wrapper around an LLM?
 
@@ -746,7 +746,7 @@ Three things are not wrapper-level:
 - **What one more question costs.** A chat model pays per output token, so every extra question costs more. Jev returns all answers in one pass, so ten questions cost about what one costs.
 - **How long you wait.** Half a second fits in a synchronous path, called on every click.
 
-So the value is not intelligence, it is the interface. It does not know more than a general model. It turns a judgment into a number you can read.
+The value is not intelligence, it is the interface. It does not know more than a general model. It turns a judgment into a number you can read.
 
 Does it need to exist, then? That depends on whether your system has anything that should be read as a number. For low-volume, asynchronous judgments that do not need a probability, a general model with a JSON schema is enough. If you want a program making thousands of small calls a minute, or you want uncertainty to be a range instead of a sentence, what you need is calibration and cheap, not smarter. A chat model is like a person. This is like a sensor. A sensor does not need to be clever, it needs to be steady, cheap and fast.
 
