@@ -1,38 +1,40 @@
 #!/usr/bin/env python3
-"""jev.py - 在命令行向 TypeSafe Jev（System One 模型）提类型化问题。
+"""jev.py - ask TypeSafe Jev (System One models) typed questions from the shell.
 
-Jev 输入一段 state（纯文本，或 JSON 对象/数组），输出预先定义好的类型化概率，
-不生成任何文字。端点：POST https://openrouter.ai/api/alpha/decisions
-（模型 ~typesafe/jev-latest）。
+Jev takes a `state` (plain text, or a JSON object/array) and returns pre-defined
+typed probabilities. It generates no text.
+Endpoint: POST https://openrouter.ai/api/alpha/decisions (model ~typesafe/jev-latest).
 
-三种题型
-  noul    -> {"noul": 0.93}                      是/否的概率，0..1
-  choice  -> {"choice": "物流仓储", "probabilities": {...}, "confidence": 0.98}
-  score   -> {"score": 1.99, "legend": {...}, "probabilities": {...}, "confidence"}
+Three question types
+  noul    -> {"noul": 0.93}                        probability of yes, 0..1
+  choice  -> {"choice": "order_logistics", "probabilities": {...}, "confidence": 0.99}
+  score   -> {"score": 2.79, "legend": {...}, "probabilities": {...}, "confidence": 0.79}
 
-用法
-  # 内联出题
-  jev.py -s "钱都扣了三天了，单号 88231 还是待发货，再不解决我就投诉！" \
-         --noul is_urgent "这条消息是否表达了紧迫性？" \
-         --choice department "应该由哪个团队处理？" \
-                  账单退款="付款、发票、退款" 物流仓储="发货、快递、库存" \
-         --score anger "客户的愤怒程度？" 平静 不满 愤怒 极度愤怒
+Usage
+  # questions written inline
+  jev.py -s "You took the money three days ago and order 88231 is still not shipped" \\
+         --noul   is_urgent  "Does this message express time pressure?" \\
+         --choice department "Which team should handle this ticket?" \\
+                  order_logistics="Shipping, courier, warehouse stock" \\
+                  billing_refunds="Payments, invoices, refunds" \\
+         --score  anger      "How angry is the customer?" Calm Annoyed Angry Furious
 
-  # 题集文件（可把 state 一起写在文件里，见 examples/*.json）
-  jev.py -q examples/01-ecommerce.json --table
-  cat ticket.txt | jev.py -q q_ticket.json --json     # state 从 stdin 读
+  # questions from a file (state can live in the same file, see examples/)
+  jev.py -q examples/en/01-ecommerce.json --table --lang en
+  cat state.txt | jev.py --noul is_negative "Is this a negative review?" --json
 
-选项
-  -s TEXT|@FILE|-   state；重复使用 key=value 可拼成 JSON 对象
-  -q FILE|JSON      完整 questions 对象，或含 state+questions 的自包含请求体
-  --table           输出 Markdown 表格（中文列名），默认单行对齐
-  --json            输出原始 API 响应，便于接 jq 或入库
-  --model M         默认 ~typesafe/jev-latest
-  --selftest        离线自检，不消耗额度
+Options
+  -s TEXT|@FILE|-   state; repeat KEY=VALUE to build a JSON object
+  -q FILE|JSON      questions object, or a self-contained body with state + questions
+  --table           Markdown table output, default is aligned lines
+  --lang {zh,en}    output language, default zh
+  --json            raw API response, for jq and storage
+  --model M         default ~typesafe/jev-latest
+  --selftest        offline self-check, no API calls
 
-密钥：环境变量 OPENROUTER_API_KEY（或 --api-key）。
+Key: OPENROUTER_API_KEY in the environment, or --api-key.
 
-仓库：https://github.com/burgerwdev/what-is-jev（含 14 个可运行的例子和用法笔记）。
+Repo: https://github.com/burgerwdev/what-is-jev
 """
 import argparse
 import json
@@ -271,20 +273,25 @@ def selftest():
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("-s", "--state", action="append", metavar="TEXT|@FILE|-",
-                   help="state; repeat as key=value for a JSON object")
-    p.add_argument("-q", "--questions", metavar="FILE|JSON", help="full questions object")
-    p.add_argument("--noul", nargs=2, action="append", metavar=("KEY", "INSTRUCTIONS"))
-    p.add_argument("--choice", nargs="+", action="append", metavar="KEY INSTRUCTIONS KEY=BESCRIPTION...")
-    p.add_argument("--score", nargs="+", action="append", metavar="KEY INSTRUCTIONS LEVEL...")
-    p.add_argument("--model", default=DEFAULT_MODEL)
-    p.add_argument("--api-key", default=os.environ.get("OPENROUTER_API_KEY"))
+                   help="state; repeat KEY=VALUE to build a JSON object")
+    p.add_argument("-q", "--questions", metavar="FILE|JSON",
+                   help="questions object, or a body containing state + questions")
+    p.add_argument("--noul", nargs=2, action="append", metavar=("KEY", "INSTRUCTION"),
+                   help='yes/no question: KEY "INSTRUCTION"')
+    p.add_argument("--choice", nargs="+", action="append", metavar="ARGS",
+                   help='choice question: KEY "INSTRUCTION" OPT=DESCRIPTION ...')
+    p.add_argument("--score", nargs="+", action="append", metavar="ARGS",
+                   help='scored question: KEY "INSTRUCTION" LEVEL ...')
+    p.add_argument("--model", default=DEFAULT_MODEL, help="model id, default " + DEFAULT_MODEL)
+    p.add_argument("--api-key", default=os.environ.get("OPENROUTER_API_KEY"),
+                   help="defaults to $OPENROUTER_API_KEY")
     p.add_argument("--site-url", help="HTTP-Referer header")
     p.add_argument("--title", help="X-OpenRouter-Title header")
-    p.add_argument("--timeout", type=float, default=90)
-    p.add_argument("--table", action="store_true", help="输出 Markdown 表格")
-    p.add_argument("--lang", choices=("zh", "en"), default="zh", help="输出语言，默认 zh")
-    p.add_argument("--json", action="store_true", help="print raw API response")
-    p.add_argument("--selftest", action="store_true")
+    p.add_argument("--timeout", type=float, default=90, help="request timeout in seconds")
+    p.add_argument("--table", action="store_true", help="print a Markdown table")
+    p.add_argument("--lang", choices=("zh", "en"), default="zh", help="output language")
+    p.add_argument("--json", action="store_true", help="print the raw API response")
+    p.add_argument("--selftest", action="store_true", help="run the offline self-check and exit")
     args = p.parse_args()
 
     if args.selftest:

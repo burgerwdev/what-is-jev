@@ -2,6 +2,8 @@
 
 English | [中文](README.zh-CN.md)
 
+Written by [好奇牛马](https://space.bilibili.com/28447213) on Bilibili.
+
 Jev is a model from TypeSafe, the first of their [System One series](https://typesafe.ai/blog/introducing-system-one-models-and-jev), released in September 2026. The one-line pitch is that it does not generate text, it only returns probabilities. I could not tell what that was good for from the pitch alone, so I ran fourteen decisions from ordinary work through it. This repo is the result: a small CLI, the fourteen examples, and what I learned.
 
 It does not write prose and it will not chat. You hand it some material, ask a few narrow questions you defined in advance, and it answers only those questions, each with a probability.
@@ -206,7 +208,7 @@ Whether it is an attack is not in doubt at 99%. What to do about it is: 0.61 ref
 
 ### 3. Fraud: a 3am cross-border wire transfer
 
-I put a transaction next to its account history so the two can be checked against each other:
+3:14 am. 84,200 CNY heading overseas from an account that has never moved more than 12,000. I put the two side by side:
 
 ```bash
 python3 jev.py \
@@ -290,7 +292,7 @@ python3 jev.py \
 
 ### 6. Hiring: is this resume worth an interview
 
-I wrote a candidate who looks strong but has one soft spot:
+Good on paper, with one soft spot: prefers mostly remote. That was the whole input:
 
 ```bash
 python3 jev.py \
@@ -345,7 +347,7 @@ This is my clearest case of the distribution mattering more than the headline. T
 
 ### 8. Sales: how hot is this lead, who should own it
 
-I wrote a lead that filled out the pricing form and is waiting on a proposal:
+Pricing page form, an IT director, a 500k budget, a review meeting next Wednesday. That is all the input there was:
 
 ```bash
 python3 jev.py \
@@ -376,7 +378,7 @@ Routing has no ambiguity at all, and this time even the buying stage comes back 
 
 ### 9. Finance: can this expense report be approved automatically
 
-I built a report that is compliant in every way except one:
+This report is in order except for one line: 4860 CNY of airfare against a 3000 CNY cap.
 
 ```bash
 python3 jev.py \
@@ -403,7 +405,7 @@ Expense reports are the easiest thing on this list to automate, because the rule
 
 ### 10. AI engineering: checking a model answer for hallucination
 
-I put a policy document next to a confidently wrong answer:
+A policy document, a user question, and an answer that is confidently wrong. Laid out together:
 
 ```bash
 python3 jev.py \
@@ -457,11 +459,11 @@ python3 jev.py \
 | main_problem | choice | voltage_rating | voltage_rating 0.60 / package_size 0.23 / missing_certification 0.09 / none 0.08 / cost 0.00 / temp_range 0.00 | 0.51 |
 | re_select | yes/no | yes 57% | yes 0.57 / no 0.43 | — |
 
-Side by side: the Samsung part is 16 V and fails on voltage outright. The KEMET part is tantalum, 50 V is fine, but 2917 is bigger than the 1210 limit and it costs 8.40 CNY. The Murata part is the only one that hits everything. It wins at 0.96.
+Taken one at a time: the Samsung part is 16 V and fails on voltage outright. The KEMET part is tantalum, 50 V is fine, but 2917 is bigger than the 1210 limit and it costs 8.40 CNY. The Murata part is the only one that hits everything. It wins at 0.96.
 
 And yet `has_viable_option` is only 0.64 and `re_select` is 0.57 in favor of looking again. I can guess why: my requirement says "at least 50 V" and the Murata part is exactly 50 V, right on the line. Anyone who has done this for a living asks the next question too, because X7R capacitance falls under DC bias, and with heat on top of that a 22 uF part can lose half its value. So I would not take this vote as final. I would go read the bias curve.
 
-That is the pattern I like about this tool: let it remove the candidates that clearly fail and keep the borderline ones for me.
+The two numbers I would check by hand are the voltage margin, and the capacitance under DC bias at 105 C.
 
 ### 12. Derating: applying the policy and finding which parts fail
 
