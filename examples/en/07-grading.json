@@ -1,0 +1,18 @@
+{
+  "note": "Education: auto-grading a short-answer question and labeling the error",
+  "state": {
+    "question": "Explain why seawater is harder to freeze than freshwater at the same temperature.",
+    "reference_answer": "Seawater contains a lot of dissolved salt. Salt lowers the freezing point of water, and freezing also has to expel the salt, which costs extra energy. So at the same temperature seawater is harder to freeze.",
+    "student_answer": "Because there is salt in seawater, the water has to get colder before it freezes, so seawater does not freeze easily. Also seawater keeps moving, and moving water does not freeze easily either.",
+    "max_score": 2
+  },
+  "questions": {
+    "is_correct": { "type": "noul", "instructions": "Is the student's main conclusion correct?",
+      "criteria": { "true": "The main conclusion matches the reference answer", "false": "Wrong conclusion or off topic" } },
+    "score": { "type": "score", "instructions": "What score should this answer get?",
+      "criteria": ["0: wrong", "1: partially correct", "2: fully correct"] },
+    "error_type": { "type": "choice", "instructions": "If points are deducted, what is the main reason?",
+      "criteria": { "none": "The answer is complete and correct", "imprecise_wording": "Right direction but vague wording", "missing_mechanism": "Missed the freezing-point mechanism", "wrong_concept": "Contains a wrong concept", "off_topic": "Did not answer the question" } },
+    "needs_teacher": { "type": "noul", "instructions": "Should a teacher review this answer instead of receiving an automatic score?" }
+  }
+}

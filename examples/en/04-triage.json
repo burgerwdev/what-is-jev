@@ -1,0 +1,16 @@
+{
+  "note": "Medical triage: how urgent is this presentation and which department (demo only, not for real medical decisions)",
+  "state": {
+    "chief_complaint": "58-year-old man. 30 minutes ago, while lifting boxes, he felt chest tightness and crushing pain radiating to his back and left shoulder, plus cold sweat and nausea. Nitroglycerin gave no relief. History of hypertension and diabetes, long-time smoker.",
+    "vitals": { "blood_pressure": "158/96", "heart_rate": 104, "consciousness": "alert", "temperature_c": 36.8 }
+  },
+  "questions": {
+    "is_emergency": { "type": "noul", "instructions": "Is this a condition that requires immediate medical attention?",
+      "criteria": { "true": "Potentially life-threatening, needs immediate care", "false": "Can be observed or seen in a routine clinic visit" } },
+    "urgency": { "type": "score", "instructions": "How urgently should this patient be seen?",
+      "criteria": ["Observe at home", "See a doctor within 24h", "Seek care soon", "Emergency now"] },
+    "department": { "type": "choice", "instructions": "Which department should this patient go to?",
+      "criteria": { "cardiology": "Chest pain, palpitations, cardiac symptoms", "gastroenterology": "Stomach pain, reflux, abdominal symptoms", "pulmonology": "Cough, shortness of breath, lung symptoms", "orthopedics": "Joints, spine, trauma", "emergency": "Needs immediate attention" } },
+    "needs_ambulance": { "type": "noul", "instructions": "Should the patient call an ambulance rather than travel by car?" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "note": "E-commerce support: who should handle this complaint, how urgent is it, is compensation being asked",
+  "state": {
+    "customer_message": "What is wrong with your website? I ordered on Friday, you took the money three days ago, order 88231 still is not shipped, and nobody answers the phone. This was a birthday gift for my client and I need it tomorrow. If this is not fixed I am filing a complaint and never coming back.",
+    "order": { "id": "88231", "amount_cny": 899, "placed": "2026-09-16", "status": "not shipped", "promised_delivery": "2026-09-19" },
+    "customer": { "tier": "gold", "lifetime_spend_cny": 12400, "tickets_last_90d": 1 }
+  },
+  "questions": {
+    "is_urgent": { "type": "noul", "instructions": "Does this message express time pressure?",
+      "criteria": { "true": "Explicitly time-sensitive or a deadline is stated", "false": "No urgency expressed" } },
+    "department": { "type": "choice", "instructions": "Which team should handle this ticket?",
+      "criteria": { "order_logistics": "Shipping, courier, warehouse stock", "billing_refunds": "Payments, invoices, refunds", "tech_support": "Site bugs, pages that fail to load", "customer_success": "Membership perks, complaint handling" } },
+    "anger": { "type": "score", "instructions": "How angry is the customer?",
+      "criteria": ["Calm", "Annoyed", "Angry", "Furious"] },
+    "asks_compensation": { "type": "noul", "instructions": "Besides chasing the shipment, is the customer asking for compensation such as a refund, credit or coupon?" }
+  }
+}

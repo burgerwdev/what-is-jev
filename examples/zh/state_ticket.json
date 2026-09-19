@@ -1,0 +1,6 @@
+{
+  "customer_tier": "enterprise",
+  "ltv_usd": 48000,
+  "prior_tickets_30d": 2,
+  "ticket": "My checkout page shows a blank screen after I click Pay. I have tried two browsers."
+}

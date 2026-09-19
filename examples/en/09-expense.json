@@ -1,0 +1,15 @@
+{
+  "note": "Finance: can this expense report be approved automatically",
+  "state": {
+    "report": "Submitted by Zhang Wei (sales), amount 4860 CNY, category travel-airfare, expense date 2026-09-18, purpose client visit, attachments: e-invoice for 4860 CNY and an itinerary",
+    "policy": "Domestic travel must be approved at least 3 working days in advance. A single airfare expense is capped at 3000 CNY; anything above the cap requires written pre-approval from the general manager. Expenses must be submitted within 30 days. Invoices must be issued to the company's full legal name.",
+    "history": "4 reports in the last 90 days, no unsettled advances, this trip was pre-approved, but there is no written general manager approval for the amount above the cap"
+  },
+  "questions": {
+    "within_policy": { "type": "noul", "instructions": "Does this expense report fully comply with the policy above?" },
+    "over_limit": { "type": "noul", "instructions": "Does the 4860 CNY amount exceed the 3000 CNY cap for a single airfare expense?" },
+    "duplicate_risk": { "type": "noul", "instructions": "Are there signs of duplicate reimbursement or a forged receipt?" },
+    "action": { "type": "choice", "instructions": "How should the finance system handle this report?",
+      "criteria": { "auto_approve": "Fully compliant, pay it", "request_documents": "Missing attachments or explanation", "manual_review": "Something is unclear, a human should decide", "reject": "Clearly violates policy" } }
+  }
+}

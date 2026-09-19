@@ -1,0 +1,17 @@
+{
+  "note": "Derating check: applying the derating policy and finding which parts fail",
+  "state": {
+    "derating_policy": "Aluminum electrolytic capacitors: working voltage no more than 80% of rated voltage. Ceramic capacitors (X7R/X5R): DC working voltage no more than 60% of rated. Chip resistors: actual dissipation no more than 50% of rated power. MOSFETs: drain-source voltage no more than 80% of rated, with 25 C junction temperature margin. Above 85 C ambient, reduce each of those limits by a further 10 percentage points.",
+    "environment": "Inside a sealed enclosure, measured max 95 C, running 24 hours a day",
+    "parts_to_check": "C12: MLCC 22 uF / 25 V X7R, actual DC voltage 12 V. C7: aluminum electrolytic 470 uF / 35 V, actual DC voltage 24 V. R31: chip resistor 1 ohm 1 W, actual dissipation 0.62 W. Q3: NMOS, rated Vds 100 V, actual Vds 85 V"
+  },
+  "questions": {
+    "all_compliant": { "type": "noul", "instructions": "Do all four parts satisfy the derating policy above, including the 95 C ambient correction?" },
+    "violations": { "type": "choice", "instructions": "Which parts violate the derating requirements?",
+      "criteria": { "only_r31": "Only the resistor is over", "only_q3": "Only the MOSFET is over", "r31_and_q3": "Both the resistor and the MOSFET are over", "only_c7": "Only the electrolytic capacitor is over", "none": "All parts pass" } },
+    "risk_level": { "type": "score", "instructions": "What is the overall risk level?",
+      "criteria": ["Negligible", "Low", "Medium, needs rework", "High, fix before production"] },
+    "next_action": { "type": "choice", "instructions": "What should happen next?",
+      "criteria": { "no_action": "Derating margin is sufficient", "replace_parts": "Switch to higher voltage or power rated parts", "change_circuit": "Lower the actual voltage or dissipation", "thermal_test": "Measure real temperature rise to check the margin", "design_review": "An engineer should re-review this section" } }
+  }
+}

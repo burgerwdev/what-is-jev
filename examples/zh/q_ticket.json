@@ -1,0 +1,10 @@
+{
+  "is_bug":      { "type": "noul",   "instructions": "Is the customer reporting a software defect?" },
+  "sentiment":   { "type": "choice", "instructions": "What is the dominant sentiment?",
+                   "criteria": { "positive": "Satisfied or praising.", "neutral": "Factual, no emotion.",
+                                 "negative": "Upset, disappointed.", "angry": "Hostile, threatening to leave." } },
+  "urgency":     { "type": "score",  "instructions": "How urgent is this ticket?",
+                   "criteria": ["Can wait for the next release", "Should be fixed this week", "Blocking revenue right now"] },
+  "needs_human": { "type": "noul",   "instructions": "Does this require a human reply rather than an automated one?" },
+  "trustworthy": { "type": "noul",   "instructions": "Is the sender's claim credible given the account data provided?" }
+}

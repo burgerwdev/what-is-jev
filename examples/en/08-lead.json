@@ -1,0 +1,19 @@
+{
+  "note": "Sales: how hot is this lead and who should own it",
+  "state": {
+    "lead_source": "pricing page form",
+    "company": "A logistics tech company, about 800 staff, same-day delivery, owns its fleet and built its own dispatch system",
+    "contact": "IT director, has a say in technical selection",
+    "message": "We are evaluating connecting our dispatch system to your API. Budget is around 500k CNY and we would like to go live next quarter. Can you send a technical proposal first? We have an internal review meeting next Wednesday.",
+    "activity": "Visited the site 7 times in 30 days, downloaded 3 whitepapers, attended one webinar"
+  },
+  "questions": {
+    "priority": { "type": "score", "instructions": "How high is the follow-up priority for this lead?",
+      "criteria": ["Invalid", "Nurture", "Worth pursuing", "High priority", "Contact now"] },
+    "owner": { "type": "choice", "instructions": "Who should follow up?",
+      "criteria": { "inside_sales": "Small and mid accounts, fast close", "solutions_engineer": "Needs a technical proposal and a POC", "enterprise_ae": "Strategic account with multiple decision makers", "self_serve": "Low value, let them use docs and a trial" } },
+    "buying_stage": { "type": "choice", "instructions": "Which buying stage is the customer in?",
+      "criteria": { "no_need": "Just browsing", "research": "Collecting options and material", "evaluation": "Comparing concrete proposals and pricing", "decision": "Already in budget and approval" } },
+    "needs_technical": { "type": "noul", "instructions": "Should a technical person or pre-sales engineer join the first call?" }
+  }
+}

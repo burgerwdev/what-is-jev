@@ -1,0 +1,18 @@
+{
+  "note": "Second source: can this buck converter be swapped for the alternative part",
+  "state": {
+    "original_part": "TPS54331DR, TI, SOIC-8, 3 A buck, input 3.5 to 28 V, 570 kHz switching, adjustable output",
+    "candidate_replacement": "MP1584EN, MPS, SOIC-8, 3 A buck, input 4.5 to 28 V, 1.5 MHz switching, adjustable output",
+    "use_case": "Industrial board converting 24 V to 5 V at 2 A. This board already passed EMC testing and temperature cycling, and has been in production for two years.",
+    "constraints": "The replacement must be pin compatible with the existing PCB, otherwise the board changes. A different switching frequency changes EMI behavior and may require retesting. The current firmware does not depend on this part."
+  },
+  "questions": {
+    "drop_in_ok": { "type": "noul", "instructions": "Can this replacement be swapped in with no re-verification at all?" },
+    "risk": { "type": "score", "instructions": "How risky is a direct swap?",
+      "criteria": ["Almost none", "Low", "Medium", "High"] },
+    "main_risk": { "type": "choice", "instructions": "What is the main risk?",
+      "criteria": { "none": "Everything is compatible", "switching_freq_emi": "Switching goes from 570 kHz to 1.5 MHz, so EMI changes", "input_voltage_range": "Minimum input voltage rises from 3.5 V to 4.5 V", "pinout": "Pin functions may not match", "thermals": "Efficiency and heat dissipation differ", "supply_price": "Supply chain or cost factor" } },
+    "required_action": { "type": "choice", "instructions": "What should be done?",
+      "criteria": { "swap_directly": "No extra validation needed", "retest_emc": "Re-run EMC testing", "redo_thermal_and_reliability": "Re-run thermal and reliability validation", "redesign_pcb": "The board needs changes", "do_not_substitute": "Risk is too high, keep the original part" } }
+  }
+}

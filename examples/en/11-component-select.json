@@ -1,0 +1,18 @@
+{
+  "note": "Component selection: which of three capacitors can go into an automotive design",
+  "state": {
+    "design_requirements": "Output filter for an automotive DC-DC converter. Operating temperature -40 to +105 C inside the enclosure. Voltage rating at least 50 V including derating margin. Capacitance at least 22 uF, tolerance +-10%. Package 1210 or smaller. AEC-Q200 and RoHS/REACH required. Life at least 2000 hours at 105 C.",
+    "candidate_1": "Murata GRM32ER71H226KE15L: 22 uF +-10%, X7R, 50 V, 1210, -55 to +125 C, AEC-Q200 and RoHS, 1.85 CNY each, 12k in stock",
+    "candidate_2": "Samsung CL32B226KOJNNNE: 22 uF +-10%, X7R, 16 V, 1210, -55 to +125 C, RoHS only, 0.62 CNY each, 200k in stock",
+    "candidate_3": "KEMET T495X226K050ATE200: 22 uF +-10%, tantalum, 50 V, 2917 package, -55 to +125 C, AEC-Q200, 8.40 CNY each, 3k in stock"
+  },
+  "questions": {
+    "has_viable_option": { "type": "noul", "instructions": "Does any of these three candidates fully meet the design requirements?",
+      "criteria": { "true": "At least one candidate meets everything", "false": "None of the three qualifies" } },
+    "recommendation": { "type": "choice", "instructions": "Which one should be chosen?",
+      "criteria": { "murata_grm32": "22 uF / 50 V 1210 with AEC-Q200", "samsung_cl32": "22 uF / 16 V 1210, cheapest", "kemet_tantalum": "22 uF / 50 V 2917, most expensive", "none": "Something is missing, restart the selection" } },
+    "main_problem": { "type": "choice", "instructions": "What is the main problem with the candidates?",
+      "criteria": { "none": "All candidates are fine", "voltage_rating": "Voltage rating is too low", "missing_certification": "Missing automotive certification", "temp_range": "Temperature range is not wide enough", "package_size": "Package does not fit", "cost": "Unit price is clearly too high" } },
+    "re_select": { "type": "noul", "instructions": "Should other part numbers be sourced instead of choosing from these three?" }
+  }
+}

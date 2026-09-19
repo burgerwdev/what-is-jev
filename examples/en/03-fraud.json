@@ -1,0 +1,17 @@
+{
+  "note": "Fraud: is a 3am cross-border wire transfer suspicious",
+  "state": {
+    "transaction": { "amount_cny": 84200, "time": "2026-09-20 03:14", "type": "cross-border transfer", "beneficiary": "newly added overseas account, first ever transfer", "device": "a phone never used before", "login_ip": "overseas" },
+    "account_history": { "age_years": 5, "largest_prior_transfer_cny": 12000, "usual_login_location": "Hangzhou", "unrecognized_device_logins_30d": 0, "registered_phone": "+86 138****2210" }
+  },
+  "questions": {
+    "is_suspicious": { "type": "noul", "instructions": "Is there clear fraud or account-takeover risk in this transaction?",
+      "criteria": { "true": "Behavior clearly diverges from account history", "false": "Consistent with normal account behavior" } },
+    "risk_level": { "type": "score", "instructions": "What is the risk level of this transaction?",
+      "criteria": ["Normal", "Low", "Medium", "High"] },
+    "risk_type": { "type": "choice", "instructions": "Which risk type is most likely?",
+      "criteria": { "account_takeover": "The account is controlled by someone else", "card_fraud": "Card or payment credential was stolen", "money_laundering": "Fast in-and-out movements or split transfers", "merchant_fraud": "The counterparty is fraudulent", "normal": "No risk signals" } },
+    "action": { "type": "choice", "instructions": "What should the system do next?",
+      "criteria": { "approve": "Risk is low, execute normally", "step_up_auth": "Require SMS or face verification", "manual_review": "Queue for review, then release", "freeze": "Hold the transfer and call the customer" } }
+  }
+}

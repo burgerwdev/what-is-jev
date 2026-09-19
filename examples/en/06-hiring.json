@@ -1,0 +1,16 @@
+{
+  "note": "Hiring: is this resume worth an interview",
+  "state": {
+    "job_requirements": "Senior backend engineer: Go microservices, 5+ years of experience, comfortable with Kubernetes and cloud-native stacks, bachelor degree or above",
+    "candidate": "Bachelor in computer science from a top-100 university, 6 years of experience, 4 years of Go and 2 years of PHP, confident with Docker and Kubernetes, led two microservice split projects, managed a team of three for a year, prefers mostly remote work, currently employed and available within a month"
+  },
+  "questions": {
+    "meets_bar": { "type": "noul", "instructions": "Does this candidate meet the hard requirements for the role?",
+      "criteria": { "true": "Experience, stack and education all satisfy the requirements", "false": "At least one hard requirement is not met" } },
+    "match": { "type": "score", "instructions": "How well does the candidate match the role?",
+      "criteria": ["No match", "Marginal", "Meets", "Strong match", "Exceeds"] },
+    "main_gap": { "type": "choice", "instructions": "What is the main gap?",
+      "criteria": { "none": "Every requirement is met", "cloud_native_depth": "Not enough Kubernetes or service-mesh depth", "team_leadership": "Limited team management experience", "education": "Education requirement is not met", "industry_background": "No experience in the target industry" } },
+    "advance": { "type": "noul", "instructions": "Should this candidate move to the next interview round?" }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "note": "Incoming quality: half-price chips from a marketplace, safe to put into stock",
+  "state": {
+    "purchase": "STM32F103C8T6, third-party marketplace listing described as surplus new stock, 6.80 CNY each versus a 12.50 CNY reference price for genuine parts, 500 piece minimum with no factory packaging, ships same day from stock",
+    "physical_signs": "Marking color is pale and the font differs from a genuine sample. The reel has no label and the bag has no humidity indicator card. Some pins show light oxidation and traces of re-tinning. Pin lengths differ within the same lot.",
+    "history": "This supplier had one lot-wide quality failure six months ago that ended in a return"
+  },
+  "questions": {
+    "counterfeit_risk": { "type": "noul", "instructions": "Do these parts carry counterfeit, refurbished or salvaged risk?",
+      "criteria": { "true": "Clear signs of counterfeiting or rework", "false": "Appearance and price look normal" } },
+    "risk_level": { "type": "score", "instructions": "What is the incoming risk level?",
+      "criteria": ["Normal stock", "Some doubt", "Several doubts", "Highly suspicious"] },
+    "main_concern": { "type": "choice", "instructions": "What is the main concern?",
+      "criteria": { "price": "Unit price is far below market", "appearance_marking": "Marking and font differ from genuine parts", "packaging": "No labels, no humidity card", "reworked_pins": "Pins show oxidation or re-tinning", "none": "Everything looks normal" } },
+    "action": { "type": "choice", "instructions": "What should happen to this lot?",
+      "criteria": { "accept": "Put it into stock as usual", "sample_and_release": "Test key parameters on samples, then release", "third_party_test": "Send samples for authenticity and parameter testing", "return_to_supplier": "Return it and require a qualified distributor", "scrap": "Risk is too high, keep it off the line" } }
+  }
+}

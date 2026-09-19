@@ -1,0 +1,19 @@
+{
+  "note": "Legal: do these contract clauses need changes before signing",
+  "state": {
+    "our_role": "buyer of services (party A)",
+    "clause_1": "3.2 Party B may adjust the service price without prior notice to Party A; the adjusted price takes effect on the date of publication.",
+    "clause_2": "7.1 If Party A terminates the contract early for any reason, fees already paid are non-refundable and Party A additionally owes 30% of the total value of the remaining term as a penalty.",
+    "clause_3": "9.4 Party B is not liable for any losses caused by service interruptions, including but not limited to direct losses and lost profits.",
+    "clause_4": "11.2 This contract renews automatically for one year unless Party A gives written notice of non-renewal at least 90 days before expiry."
+  },
+  "questions": {
+    "has_unfair_terms": { "type": "noul", "instructions": "Do these clauses contain terms clearly unfavorable to Party A?",
+      "criteria": { "true": "Contains unilateral rights, liability waivers or heavy penalties", "false": "Terms are broadly balanced" } },
+    "risk_level": { "type": "score", "instructions": "What is the overall risk level?",
+      "criteria": ["Acceptable", "Some clauses need edits", "High risk, renegotiate", "Do not sign"] },
+    "risk_type": { "type": "choice", "instructions": "Which risk type stands out most?",
+      "criteria": { "unilateral_pricing": "The other side can change the price unilaterally", "liability_waiver": "The other side waives its own liability", "auto_renewal": "Automatic renewal that is hard to exit", "high_penalty": "Termination is too expensive", "none": "No obvious risk found" } },
+    "needs_lawyer": { "type": "noul", "instructions": "Should this contract go to a lawyer for human review instead of being signed directly?" }
+  }
+}

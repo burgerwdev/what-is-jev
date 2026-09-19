@@ -1,0 +1,17 @@
+{
+  "note": "AI engineering: checking a model answer for hallucination before it reaches the user",
+  "state": {
+    "knowledge_base": "Annual leave policy: 5 days after 1 year of service, 10 days after 3 years, 15 days after 5 years. Leave must be requested 3 working days in advance. Unused days carry over until March 31 of the following year.",
+    "user_question": "I have been here two years, how many days of annual leave do I get and what happens to unused days?",
+    "model_answer": "After 2 years of service you get 7 days of annual leave. You must request it one week in advance, and unused days expire at the end of the year."
+  },
+  "questions": {
+    "supported": { "type": "noul", "instructions": "Is the model answer fully supported by the knowledge base?",
+      "criteria": { "true": "Every factual claim can be found in the document", "false": "Contains claims not backed by the document" } },
+    "contradicts": { "type": "noul", "instructions": "Does the model answer contradict the knowledge base?" },
+    "faithfulness": { "type": "score", "instructions": "How faithful is this answer?",
+      "criteria": ["Faithful", "Imprecise details", "Key facts wrong", "Fabricated"] },
+    "error_point": { "type": "choice", "instructions": "If there is an error, where is it?",
+      "criteria": { "none": "The answer matches the document", "day_count": "Wrong number of days", "notice_period": "Wrong advance notice", "carryover": "Wrong rule for unused days", "multiple": "Several facts are wrong" } }
+  }
+}
